@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: thulium_drake
-  description: A Developer Workstation
+  description: A Developer Workstation based on Fedora
   role_name: workstation
 
   license: GPLv3
