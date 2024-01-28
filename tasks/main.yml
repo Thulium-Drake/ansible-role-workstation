@@ -1,0 +1,125 @@
+---
+- name: 'Ensure base extra repos'
+  ansible.builtin.yum_repository:
+    name: "{{ repo['name'] }}"
+    description: "{{ repo['description'] }}"
+    baseurl: "{{ repo['url'] }}"
+    gpgkey: "{{ repo['gpgkey'] }}"
+  loop:
+    - name: 'vscodium'
+      description: 'VSCodium'
+      url: 'https://download.vscodium.com/rpms/'
+      gpgkey: 'https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg'
+  loop_control:
+    loop_var: 'repo'
+  when: workstation_manage_repos
+
+- name: 'Ensure base packages'
+  ansible.builtin.dnf:
+    name:
+      - '@Xfce'
+      - 'cockpit'
+      - 'cockpit-machines'
+      - 'codium'
+      - 'firefox'
+      - 'flatpak'
+      - 'evince'
+      - 'gnome-calculator'
+      - 'libreoffice-calc'
+      - 'libreoffice-writer'
+      - 'nextcloud-client'
+      - 'plymouth-theme-spinner'
+      - 'redshift-gtk'
+      - 'ristretto'
+      - 'slick-greeter'
+      - 'terminator'
+      - 'thunderbird'
+      - 'vlc'
+      - 'workrave-xfce'
+      - 'zeal'
+    state: 'present'
+    exclude:
+      - 'NetworkManager-fortisslvpn-gnome'
+      - 'NetworkManager-iodine-gnome'
+      - 'NetworkManager-l2tp-gnome'
+      - 'NetworkManager-libreswan-gnome'
+      - 'NetworkManager-openconnect-gnome'
+      - 'NetworkManager-openvpn-gnome'
+      - 'NetworkManager-pptp-gnome'
+      - 'NetworkManager-ssh-gnome'
+      - 'NetworkManager-sstp-gnome'
+      - 'NetworkManager-strongswan-gnome'
+      - 'NetworkManager-vpnc-gnome'
+      - 'dnfdragora-updater'
+      - 'xfce4-terminal'
+
+- name: 'Ensure flakhub remote'
+  community.general.flatpak_remote:
+    name: 'flathub'
+    state: 'present'
+    flatpakrepo_url: 'https://dl.flathub.org/repo/flathub.flatpakrepo'
+
+- name: 'Ensure flatpaks'
+  community.general.flatpak:
+    name:
+      - 'com.github.tchx84.Flatseal'
+      - 'com.spotify.Client'
+      - 'com.discordapp.Discord'
+      - 'com.bitwarden.desktop'
+      - 'com.jgraph.drawio.desktop'
+
+- name: 'Ensure services'
+  ansible.builtin.service:
+    name: "{{ service }}"
+    state: 'started'
+    enabled: true
+  loop:
+    - 'cockpit.socket'
+  loop_control:
+    loop_var: 'service'
+
+- name: 'Ensure graphical boot'
+  when: not workstation_headless
+  notify: 'Reboot system'
+  block:
+    - name: 'Ensure graphical boot target'
+      ansible.builtin.file:
+        src: '/usr/lib/systemd/system/graphical.target'
+        dest: '/etc/systemd/system/default.target'
+        state: 'link'
+
+    - name: 'Get Plymouth theme'
+      ansible.builtin.command: plymouth-set-default-theme
+      register: 'workstation_current_plymouth'
+      changed_when: false
+
+    - name: 'Ensure Plymouth theme'
+      ansible.builtin.command: plymouth-set-default-theme spinner -R
+      when: workstation_current_plymouth['stdout'] != 'spinner'
+      changed_when: true
+
+    - name: 'Configure LightDM'
+      ansible.builtin.copy:
+        content: |
+          # THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
+          [LightDM]
+          [Seat:*]
+          greeter-hide-users=true
+          [XDMCPServer]
+          [VNCServer]
+        dest: '/etc/lightdm/lightdm.conf'
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+
+    - name: 'Configure LightDM Greeter'
+      ansible.builtin.copy:
+        content: |
+          # THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
+          [Greeter]
+          background={{ workstation_login_background }}
+          content-align={{ workstation_login_align }}
+        dest: '/etc/lightdm/slick-greeter.conf'
+        owner: 'root'
+        group: 'root'
+        mode: '0644'

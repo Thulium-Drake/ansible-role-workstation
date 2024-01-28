@@ -1,0 +1,10 @@
+---
+# Controls if the workstation is headless (for example because it's running Thinlinc)
+workstation_headless: false
+
+# Set to false when repos are managed by some other means (Satellite or something)
+workstation_manage_repos: true
+
+# Which background to show on the login screen and where to place the login prompt
+workstation_login_background: '/usr/share/backgrounds/xfce/xfce-shapes.svg'
+workstation_login_align: 'right'
