@@ -23,6 +23,7 @@
       - 'firefox'
       - 'flatpak'
       - 'evince'
+      - 'git'
       - 'gnome-calculator'
       - 'libreoffice-calc'
       - 'libreoffice-writer'
