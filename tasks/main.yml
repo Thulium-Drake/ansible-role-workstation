@@ -18,8 +18,6 @@
   ansible.builtin.dnf:
     name:
       - '@Xfce'
-      - 'cockpit'
-      - 'cockpit-machines'
       - 'codium'
       - 'firefox'
       - 'flatpak'
@@ -27,6 +25,7 @@
       - 'gnome-calculator'
       - 'libreoffice-calc'
       - 'libreoffice-writer'
+      - 'menulibre'
       - 'nextcloud-client'
       - 'plymouth-theme-spinner'
       - 'redshift-gtk'
@@ -77,6 +76,17 @@
     - 'cockpit.socket'
   loop_control:
     loop_var: 'service'
+
+- name: 'Ensure VM capability'
+  when: workstation_hypervisor
+  block:
+    - name: 'Ensure packages'
+      ansible.builtin.dnf:
+        name:
+          - 'cockpit'
+          - 'cockpit-machines'
+          - 'cockpit-podman'
+        state: 'present'
 
 - name: 'Ensure graphical boot'
   when: not workstation_headless
