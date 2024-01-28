@@ -31,6 +31,7 @@
       - 'plymouth-theme-spinner'
       - 'redshift-gtk'
       - 'ristretto'
+      - 'rsync'
       - 'slick-greeter'
       - 'terminator'
       - 'thunderbird'
