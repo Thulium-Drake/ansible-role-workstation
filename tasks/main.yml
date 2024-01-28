@@ -18,6 +18,7 @@
   ansible.builtin.dnf:
     name:
       - '@Xfce'
+      - 'cockpit'
       - 'codium'
       - 'firefox'
       - 'flatpak'
@@ -83,7 +84,6 @@
     - name: 'Ensure packages'
       ansible.builtin.dnf:
         name:
-          - 'cockpit'
           - 'cockpit-machines'
           - 'cockpit-podman'
         state: 'present'
