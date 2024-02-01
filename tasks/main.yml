@@ -24,6 +24,7 @@
       - 'flatpak'
       - 'evince'
       - 'git'
+      - 'google-noto-color-emoji-fonts'
       - 'gnome-calculator'
       - 'libreoffice-calc'
       - 'libreoffice-writer'
