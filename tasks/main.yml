@@ -141,3 +141,11 @@
         owner: 'root'
         group: 'root'
         mode: '0644'
+
+- name: 'Ensure polkit is configured to allow users to manage Bluetooth radios'
+  ansible.builtin.copy:
+    src: '99-blueman.rules'
+    dest: '/etc/polkit-1/rules.d/99-blueman.rules'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
