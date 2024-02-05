@@ -36,6 +36,7 @@
       - 'ristretto'
       - 'rsync'
       - 'seahorse'
+      - 'selinux-policy-doc'
       - 'slick-greeter'
       - 'terminator'
       - 'thunderbird'
