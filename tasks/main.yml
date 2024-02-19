@@ -18,8 +18,10 @@
   ansible.builtin.dnf:
     name:
       - '@Xfce'
+      - 'bash-completion'
       - 'cockpit'
       - 'codium'
+      - 'file-roller'
       - 'firefox'
       - 'flatpak'
       - 'evince'
