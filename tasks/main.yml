@@ -164,4 +164,4 @@
   args:
     creates: '/etc/usbguard/rules.d/default_hardware'
   changed_when: true
-  when: ansible_facts['ansible_virtualization_role'] == 'host'
+  when: ansible_facts['virtualization_role'] == 'host'
