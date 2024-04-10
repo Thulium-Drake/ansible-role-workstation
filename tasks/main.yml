@@ -64,6 +64,7 @@
       - 'NetworkManager-sstp-gnome'
       - 'NetworkManager-strongswan-gnome'
       - 'NetworkManager-vpnc-gnome'
+      - 'nano-default-editor'
       - 'dnfdragora-updater'
       - 'xfce4-terminal'
 
