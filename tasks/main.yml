@@ -33,6 +33,7 @@
       - 'libreoffice-writer'
       - 'menulibre'
       - 'nextcloud-client'
+      - 'plocate'
       - 'plymouth-theme-spinner'
       - 'pwgen'
       - 'redshift-gtk'
@@ -41,6 +42,7 @@
       - 'seahorse'
       - 'selinux-policy-doc'
       - 'slick-greeter'
+      - 'synapse'
       - 'terminator'
       - 'thunderbird'
       - 'usbguard'
@@ -165,3 +167,10 @@
     creates: '/etc/usbguard/rules.d/default_hardware'
   changed_when: true
   when: ansible_facts['virtualization_role'] == 'host'
+
+- name: 'Schedule updatedb'
+  ansible.builtin.cron:
+    name: 'Update plocate DB'
+    job: '/usr/bin/updatedb'
+    user: 'root'
+    special_time: 'hourly'
