@@ -23,7 +23,6 @@
       - 'codium'
       - 'default-fonts'
       - 'file-roller'
-      - 'firefox'
       - 'flatpak'
       - 'evince'
       - 'gedit'
@@ -44,14 +43,12 @@
       - 'slick-greeter'
       - 'synapse'
       - 'terminator'
-      - 'thunderbird'
       - 'usbguard'
       - 'usbguard-notifier'
       - 'vim-default-editor'
       - 'vlc'
       - 'wget'
       - 'workrave-xfce'
-      - 'zeal'
       - 'zenity'
     state: 'present'
     exclude:
@@ -76,16 +73,25 @@
     state: 'present'
     flatpakrepo_url: 'https://dl.flathub.org/repo/flathub.flatpakrepo'
 
-- name: 'Ensure flatpaks'
+- name: 'Ensure flatpaks from Fedora'
   community.general.flatpak:
     name:
       - 'com.github.tchx84.Flatseal'
-      - 'com.spotify.Client'
-      - 'com.discordapp.Discord'
+      - 'org.mozilla.firefox'
+      - 'org.mozilla.Thunderbird'
+      - 'org.zealdocs.zeal'
+    remote: 'fedora'
+
+- name: 'Ensure flatpaks from Flathub'
+  community.general.flatpak:
+    name:
       - 'com.bitwarden.desktop'
+      - 'com.discordapp.Discord'
       - 'com.jgraph.drawio.desktop'
-      - 'org.signal.Signal'
+      - 'com.spotify.Client'
       - 'im.riot.Riot'
+      - 'org.signal.Signal'
+    remote: 'flathub'
 
 - name: 'Ensure services'
   ansible.builtin.service:
