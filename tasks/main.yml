@@ -28,6 +28,7 @@
       - 'gedit'
       - 'git'
       - 'gnome-calculator'
+      - 'kernel-tools'
       - 'libreoffice-calc'
       - 'libreoffice-writer'
       - 'menulibre'
