@@ -31,6 +31,7 @@
       - 'libreoffice-calc'
       - 'libreoffice-writer'
       - 'menulibre'
+      - 'NetworkManager-tui'
       - 'nextcloud-client'
       - 'plocate'
       - 'plymouth-theme-spinner'
