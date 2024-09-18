@@ -1,4 +1,6 @@
 ---
+workstation_desktop: 'xfce'  # or sway
+
 # Controls if the workstation is headless (for example because it's running Thinlinc)
 workstation_headless: false
 

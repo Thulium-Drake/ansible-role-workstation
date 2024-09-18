@@ -14,45 +14,22 @@
     loop_var: 'repo'
   when: workstation_manage_repos
 
-- name: 'Ensure base packages'
+- name: 'Ensure packages are absent we dont want'
+  ansible.builtin.dnf:
+    name: 'nano*'
+    state: 'absent'
+
+- name: 'Ensure Xfce Desktop Environment'
   ansible.builtin.dnf:
     name:
+      - '@Fonts'
       - '@Xfce'
-      - 'bash-completion'
-      - 'cockpit'
-      - 'codium'
-      - 'default-fonts'
-      - 'file-roller'
-      - 'flatpak'
-      - 'evince'
-      - 'gedit'
-      - 'git'
-      - 'gnome-calculator'
-      - 'kernel-tools'
-      - 'libreoffice-calc'
-      - 'libreoffice-writer'
       - 'menulibre'
-      - 'NetworkManager-tui'
-      - 'nextcloud-client'
-      - 'plocate'
-      - 'plymouth-theme-spinner'
-      - 'pwgen'
       - 'redshift-gtk'
-      - 'ristretto'
-      - 'rsync'
-      - 'seahorse'
-      - 'selinux-policy-doc'
       - 'slick-greeter'
       - 'synapse'
       - 'terminator'
-      - 'usbguard'
-      - 'usbguard-notifier'
-      - 'vim-default-editor'
-      - 'vlc'
-      - 'wget'
       - 'workrave-xfce'
-      - 'zenity'
-    state: 'present'
     exclude:
       - 'NetworkManager-fortisslvpn-gnome'
       - 'NetworkManager-iodine-gnome'
@@ -68,6 +45,75 @@
       - 'nano-default-editor'
       - 'dnfdragora-updater'
       - 'xfce4-terminal'
+  when: workstation_desktop == 'xfce'
+
+- name: 'Ensure Sway Desktop environment'
+  ansible.builtin.dnf:
+    name:
+      - '@base-graphical'
+      - '@Common NetworkManager Submodules'
+      - '@Core'
+      - '@Fonts'
+      - '@Hardware Support'
+      - '@Multimedia'
+      - '@Sway Window Manager'
+      - '@Sway Window Manager (supplemental packages)'
+      - 'cronie'
+      - 'kitty'
+      - 'power-profiles-daemon'
+      - 'wlogout'
+      - 'xfce4-settings'
+    exclude:
+      - 'NetworkManager-fortisslvpn-gnome'
+      - 'NetworkManager-iodine-gnome'
+      - 'NetworkManager-l2tp-gnome'
+      - 'NetworkManager-libreswan-gnome'
+      - 'NetworkManager-openconnect-gnome'
+      - 'NetworkManager-openvpn-gnome'
+      - 'NetworkManager-pptp-gnome'
+      - 'NetworkManager-ssh-gnome'
+      - 'NetworkManager-sstp-gnome'
+      - 'NetworkManager-strongswan-gnome'
+      - 'NetworkManager-vpnc-gnome'
+      - 'nano-default-editor'
+  when: workstation_desktop == 'sway'
+
+- name: 'Ensure base packages'
+  ansible.builtin.dnf:
+    name:
+      - 'bash-completion'
+      - 'cockpit'
+      - 'codium'
+      - 'evince'
+      - 'file-roller'
+      - 'flatpak'
+      - 'gedit'
+      - 'git'
+      - 'gnome-calculator'
+      - 'kernel-tools'
+      - 'libreoffice-calc'
+      - 'libreoffice-writer'
+      - 'NetworkManager-tui'
+      - 'nextcloud-client'
+      - 'plocate'
+      - 'pwgen'
+      - 'ristretto'
+      - 'rsync'
+      - 'seahorse'
+      - 'selinux-policy-doc'
+      - 'usbguard'
+      - 'usbguard-notifier'
+      - 'vim-default-editor'
+      - 'vlc'
+      - 'wget'
+      - 'zenity'
+    state: 'present'
+
+- name: 'Ensure Fedora flatpak remote'
+  community.general.flatpak_remote:
+    name: 'fedora'
+    state: 'present'
+    flatpakrepo_url: 'oci+https://registry.fedoraproject.org'
 
 - name: 'Ensure flakhub remote'
   community.general.flatpak_remote:
@@ -75,14 +121,27 @@
     state: 'present'
     flatpakrepo_url: 'https://dl.flathub.org/repo/flathub.flatpakrepo'
 
+- name: 'Ensure flatpak wrapper'
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      # This file is managed by Ansible, YOUR CHANGES WILL BE LOST!
+      # This script works around an issue that flatpak requires a D-BUS session to work
+      /usr/bin/dbus-run-session /usr/bin/flatpak $@
+    dest: '/usr/bin/flatpak-wrapper'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
 - name: 'Ensure flatpaks from Fedora'
   community.general.flatpak:
     name:
       - 'com.github.tchx84.Flatseal'
-      - 'org.mozilla.firefox'
       - 'org.mozilla.Thunderbird'
       - 'org.zealdocs.zeal'
     remote: 'fedora'
+    method: 'system'
+    executable: '/usr/bin/flatpak-wrapper'
 
 - name: 'Ensure flatpaks from Flathub'
   community.general.flatpak:
@@ -92,8 +151,11 @@
       - 'com.jgraph.drawio.desktop'
       - 'com.spotify.Client'
       - 'im.riot.Riot'
+      - 'org.mozilla.firefox'
       - 'org.signal.Signal'
     remote: 'flathub'
+    method: 'system'
+    executable: '/usr/bin/flatpak-wrapper'
 
 - name: 'Ensure services'
   ansible.builtin.service:
@@ -148,6 +210,7 @@
         owner: 'root'
         group: 'root'
         mode: '0644'
+      when: workstation_desktop == 'xfce'
 
     - name: 'Configure LightDM Greeter'
       ansible.builtin.copy:
@@ -160,6 +223,7 @@
         owner: 'root'
         group: 'root'
         mode: '0644'
+      when: workstation_desktop == 'xfce'
 
 - name: 'Ensure polkit is configured to allow users to manage Bluetooth radios'
   ansible.builtin.copy:
