@@ -199,6 +199,20 @@
       when: workstation_current_plymouth['stdout'] != 'spinner'
       changed_when: true
 
+    - name: 'Configure SDDM'
+      ansible.builtin.template:
+        src: "{{ file['template'] }}"
+        dest: "{{ file['dest'] }}"
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+      loop:
+        - template: 'sddm-hide-users.conf.j2'
+          dest: '/etc/sddm.conf.d/hide-users.conf'
+      loop_control:
+        loop_var: 'file'
+      when: workstation_desktop == 'sway'
+
     - name: 'Configure LightDM'
       ansible.builtin.template:
         src: "{{ file['template'] }}"
@@ -211,6 +225,8 @@
           dest: '/etc/lightdm/slick-greeter.conf'
         - template: 'lightdm.conf.j2'
           dest: '/etc/lightdm/lightdm.conf'
+      loop_control:
+        loop_var: 'file'
       when: workstation_desktop == 'xfce'
 
 - name: 'Ensure polkit is configured to allow users to manage Bluetooth radios'
