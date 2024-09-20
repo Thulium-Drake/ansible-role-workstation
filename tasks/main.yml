@@ -200,31 +200,17 @@
       changed_when: true
 
     - name: 'Configure LightDM'
-      ansible.builtin.copy:
-        content: |
-          # THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
-          [LightDM]
-          [Seat:*]
-          greeter-hide-users=true
-          [XDMCPServer]
-          [VNCServer]
-        dest: '/etc/lightdm/lightdm.conf'
+      ansible.builtin.template:
+        src: "{{ file['template'] }}"
+        dest: "{{ file['dest'] }}"
         owner: 'root'
         group: 'root'
         mode: '0644'
-      when: workstation_desktop == 'xfce'
-
-    - name: 'Configure LightDM Greeter'
-      ansible.builtin.copy:
-        content: |
-          # THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
-          [Greeter]
-          background={{ workstation_login_background }}
-          content-align={{ workstation_login_align }}
-        dest: '/etc/lightdm/slick-greeter.conf'
-        owner: 'root'
-        group: 'root'
-        mode: '0644'
+      loop:
+        - template: 'lightdm-slick-greeter.conf.j2'
+          dest: '/etc/lightdm/slick-greeter.conf'
+        - template: 'lightdm.conf.j2'
+          dest: '/etc/lightdm/lightdm.conf'
       when: workstation_desktop == 'xfce'
 
 - name: 'Ensure polkit is configured to allow users to manage Bluetooth radios'
