@@ -59,7 +59,7 @@
       - '@Sway Window Manager'
       - '@Sway Window Manager (supplemental packages)'
       - 'cronie'
-      - 'kitty'
+      - 'alacritty'
       - 'power-profiles-daemon'
       - 'wlogout'
       - 'xfce4-settings'
