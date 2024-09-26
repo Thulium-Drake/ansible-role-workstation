@@ -3,7 +3,7 @@ This role will turn a basic install of Fedora into a workstation which is suitab
 
   * Run VMs managed with cockpit-machines
   * Run containers with podman (also visible in Cockpit)
-  * Minimal, but still complete Xfce desktop
+  * Minimal, but still complete Sway or Xfce desktop
     * Developer toolchain (vim, vscodium, drawio)
     * Office tools (firefox, thunderbird, some libreoffice utilities)
     * Discord for communication
