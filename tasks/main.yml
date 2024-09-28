@@ -103,8 +103,6 @@
       - 'rsync'
       - 'seahorse'
       - 'selinux-policy-doc'
-      - 'usbguard'
-      - 'usbguard-notifier'
       - 'vim-default-editor'
       - 'vlc'
       - 'wget'
