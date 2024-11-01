@@ -235,13 +235,6 @@
     group: 'root'
     mode: '0644'
 
-- name: 'Ensure USBGuard default policy (only on HW)'
-  ansible.builtin.command: usbguard generate-policy > /etc/usbguard/rules.d/default_hardware
-  args:
-    creates: '/etc/usbguard/rules.d/default_hardware'
-  changed_when: true
-  when: ansible_facts['virtualization_role'] == 'host'
-
 - name: 'Schedule updatedb'
   ansible.builtin.cron:
     name: 'Update plocate DB'
