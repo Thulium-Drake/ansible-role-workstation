@@ -19,6 +19,33 @@
     name: 'nano*'
     state: 'absent'
 
+- name: 'Ensure GNOME Desktop Environment'
+  ansible.builtin.dnf:
+    name:
+      - '@Fonts'
+      - '@GNOME'
+      - 'redshift-gtk'
+      - 'slick-greeter'
+      - 'synapse'
+      - 'terminator'
+      - 'workrave-xfce'
+    exclude:
+      - 'NetworkManager-fortisslvpn-gnome'
+      - 'NetworkManager-iodine-gnome'
+      - 'NetworkManager-l2tp-gnome'
+      - 'NetworkManager-libreswan-gnome'
+      - 'NetworkManager-openconnect-gnome'
+      - 'NetworkManager-openvpn-gnome'
+      - 'NetworkManager-pptp-gnome'
+      - 'NetworkManager-ssh-gnome'
+      - 'NetworkManager-sstp-gnome'
+      - 'NetworkManager-strongswan-gnome'
+      - 'NetworkManager-vpnc-gnome'
+      - 'nano-default-editor'
+      - 'dnfdragora-updater'
+      - 'gnome-terminal'
+  when: workstation_desktop == 'gnome'
+
 - name: 'Ensure Xfce Desktop Environment'
   ansible.builtin.dnf:
     name:
