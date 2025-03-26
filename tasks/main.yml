@@ -268,3 +268,16 @@
     job: '/usr/bin/updatedb'
     user: 'root'
     special_time: 'hourly'
+
+- name: 'Ensure udev rules for power-profiles-daemon'
+  ansible.builtin.copy:
+    content: |
+      # Switch to performance profile when plugged in
+      ACTION=="change", SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="/usr/bin/powerprofilesctl set performance"
+      # Switch to power-saver when on battery
+      ACTION=="change", SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="/usr/bin/powerprofilesctl set power-saver"
+    dest: '/etc/udev/rules.d/99-power-profile.rules'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  when: workstation_desktop == 'sway'
