@@ -1,3 +1,4 @@
+# THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
 #!/bin/bash
 # Copies all default routes from main table to clearnet table on interface change and maintain ip rule
 
