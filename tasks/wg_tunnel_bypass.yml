@@ -15,16 +15,7 @@
 
 #!!! REVIEW_ME !!! -> Shamelessly ripped from Dr. Chat, can't find these params in the docs :(
 - name: 'Ensure FirewallD rules for Squid are present'
-  ansible.posix.firewalld:
-    permanent: 'true'
-    immediate: 'true'
-    state: 'enabled'
-    direct: 'yes'
-    ipv: "{{ item }}"
-    table: 'mangle'
-    chain: 'OUTPUT'
-    priority: '0'
-    args: '-m owner --uid-owner squid -j MARK --set-mark 1'
+  ansible.builtin.command: 'firewall-cmd --permanent --direct --add-rule {{ item }} mangle OUTPUT 0 -m owner --uid-owner squid -j MARK --set-mark 1'
   loop:
     - 'ipv4'
     - 'ipv6'
