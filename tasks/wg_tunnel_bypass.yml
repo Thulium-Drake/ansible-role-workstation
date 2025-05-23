@@ -54,3 +54,5 @@
     src: 'files/10_wg_bypass_proxy'
     dest: '/etc/NetworkManager/dispatcher.d/10_wg_bypass_proxy'
     mode: '0755'
+    owner: 'root'
+    group: 'root'
