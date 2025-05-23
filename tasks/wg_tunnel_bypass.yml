@@ -1,0 +1,53 @@
+---
+- name: 'Ensure Squid is installed'
+  ansible.builtin.package:
+    name: 'squid'
+    state: 'present'
+
+- name: 'Ensure Squid config rules'
+  ansible.builtin.blockinfile:
+    marker: "# {{ ansible_managed }}"
+    block: |
+      dns_nameservers 8.8.8.8 8.8.4.4 2001:4860:4860::8888 2001:4860:4860::8844
+      http_port 127.0.0.1:3128
+    dest: '/etc/squid/squid.conf'
+    insert_after: 'EOF'
+
+- name: 'Ensure FirewallD rules for Squid are present'
+  ansible.builtin.command: 'firewall-cmd --permanent --direct --add-rule {{ ipv_version }} mangle OUTPUT 0 -m owner --uid-owner squid -j MARK --set-mark 1'
+  loop:
+    - 'ipv4'
+    - 'ipv6'
+  loop_control:
+    loop_var: 'ipv_version'
+
+- name: 'Restart and enabled services'
+  ansible.builtin.service:
+    name: "{{ service }}"
+    state: 'restarted'
+    enabled: true
+  loop:
+    - 'squid'
+    - 'firewalld'
+  loop_control:
+    loop_var: 'service'
+
+- name: 'Ensure /etc/iproute2 directory exists'
+  ansible.builtin.file:
+    state: 'directory'
+    path: '/etc/iproute2'
+
+- name: 'Ensure /etc/iproute2/rt_tables file exists'
+  ansible.builtin.lineinfile:
+    regexp: '^200 clearnet'
+    line: '200 clearnet'
+    path: '/etc/iproute2/rt_tables'
+    create: true
+
+- name: 'Ensure NetworkManager dispatch script is in place'
+  ansible.builtin.template:
+    src: 'files/10_wg_bypass_proxy'
+    dest: '/etc/NetworkManager/dispatcher.d/10_wg_bypass_proxy'
+    mode: '0755'
+    owner: 'root'
+    group: 'root'
