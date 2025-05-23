@@ -25,7 +25,7 @@
   ansible.builtin.service:
     name: "{{ service }}"
     state: 'restarted'
-    enabled: 'true'
+    enabled: true
   loop:
     - 'squid'
     - 'firewalld'
@@ -39,9 +39,10 @@
 
 - name: 'Ensure /etc/iproute2/rt_tables file exists'
   ansible.builtin.lineinfile:
+    regexp: '^200 clearnet'
     line: '200 clearnet'
-    marker: "# {{ ansible_managed }}"
-    dest: '/etc/iproute2/rt_tables'
+    path: '/etc/iproute2/rt_tables'
+    create: true
 
 - name: 'Ensure NetworkManager dispatch script is in place'
   ansible.builtin.template:
