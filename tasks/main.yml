@@ -284,4 +284,4 @@
 
 - name: 'Ensure Wireguard tunnel-bypass proxy is enabled'
   ansible.builtin.include: 
-  when: wg_tunnel_bypass == true
+  when: wg_tunnel_bypass
