@@ -13,21 +13,24 @@
     dest: '/etc/squid/squid.conf'
     insert_after: 'EOF'
 
-#!!! REVIEW_ME !!! -> Shamelessly ripped from Dr. Chat, can't find these params in the docs :(
 - name: 'Ensure FirewallD rules for Squid are present'
-  ansible.builtin.command: 'firewall-cmd --permanent --direct --add-rule {{ item }} mangle OUTPUT 0 -m owner --uid-owner squid -j MARK --set-mark 1'
+  ansible.builtin.command: 'firewall-cmd --permanent --direct --add-rule {{ ipv_version }} mangle OUTPUT 0 -m owner --uid-owner squid -j MARK --set-mark 1'
   loop:
     - 'ipv4'
     - 'ipv6'
+  loop_control:
+    loop_var: 'ipv_version'
 
 - name: 'Restart and enabled services'
   ansible.builtin.service:
-    name: "{{ item }}"
+    name: "{{ service }}"
     state: 'restarted'
     enabled: 'true'
   loop:
     - 'squid'
     - 'firewalld'
+  loop_control:
+    loop_var: 'service'
 
 - name: 'Ensure /etc/iproute2 directory exists'
   ansible.builtin.file:
