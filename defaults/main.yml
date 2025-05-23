@@ -15,4 +15,4 @@ workstation_login_background: '/usr/share/backgrounds/default.png'
 workstation_login_align: 'right'
 
 # Enable Wireguard tunnel-bypass using proxy
-wg_tunnel_bypass: false
+workstation_wg_tunnel_bypass: false
