@@ -48,3 +48,9 @@
     line: '200 clearnet'
     marker: "# {{ ansible_managed }}"
     dest: '/etc/iproute2/rt_tables'
+
+- name: 'Ensure NetworkManager dispatch script is in place'
+  ansible.builtin.template:
+    src: 'files/10_wg_bypass_proxy'
+    dest: '/etc/NetworkManager/dispatcher.d/10_wg_bypass_proxy'
+    mode: '0755'
