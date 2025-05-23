@@ -1,0 +1,50 @@
+---
+- name: 'Ensure Squid is installed'
+  ansible.builtin.package:
+    name: 'squid'
+    state: 'present'
+
+- name: 'Ensure Squid config rules'
+  ansible.builtin.blockinfile:
+    marker: "# {{ ansible_managed }}"
+    block: |
+      dns_nameservers 8.8.8.8 8.8.4.4 2001:4860:4860::8888 2001:4860:4860::8844
+      http_port 127.0.0.1:3128
+    dest: '/etc/squid/squid.conf'
+    insert_after: 'EOF'
+
+#!!! REVIEW_ME !!! -> Shamelessly ripped from Dr. Chat, can't find these params in the docs :(
+- name: 'Ensure FirewallD rules for Squid are present'
+  ansible.posix.firewalld:
+    permanent: 'true'
+    immediate: 'true'
+    state: 'enabled'
+    direct: 'yes'
+    ipv: "{{ item }}"
+    table: 'mangle'
+    chain: 'OUTPUT'
+    priority: '0'
+    args: '-m owner --uid-owner squid -j MARK --set-mark 1'
+  loop:
+    - 'ipv4'
+    - 'ipv6'
+
+- name: 'Restart and enabled services'
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: 'restarted'
+    enabled: 'true'
+  loop:
+    - 'squid'
+    - 'firewalld'
+
+- name: 'Ensure /etc/iproute2 directory exists'
+  ansible.builtin.file:
+    state: 'directory'
+    path: '/etc/iproute2'
+
+- name: 'Ensure /etc/iproute2/rt_tables file exists'
+  ansible.builtin.lineinfile:
+    line: '200 clearnet'
+    marker: "# {{ ansible_managed }}"
+    dest: '/etc/iproute2/rt_tables'
