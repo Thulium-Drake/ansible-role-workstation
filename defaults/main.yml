@@ -13,3 +13,6 @@ workstation_hypervisor: true
 # Which background to show on the login screen and where to place the login prompt
 workstation_login_background: '/usr/share/backgrounds/default.png'
 workstation_login_align: 'right'
+
+# Enable Wireguard tunnel-bypass using proxy
+wg_tunnel_bypass: false
