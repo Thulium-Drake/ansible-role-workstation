@@ -1,0 +1,31 @@
+#!/bin/bash
+# Copies all default routes from main table to clearnet table on interface change and maintain ip rule
+
+IFACE=$1
+STATE=$2
+
+if [[ "$STATE" == "up" || "$STATE" == "down" ]]; then
+    # Route all traffic marked with 0x1 through clearnet
+    ip rule list | grep -q "fwmark 0x1 lookup clearnet"
+    if [ $? -ne 0 ]; then
+        ip rule add fwmark 1 table clearnet
+    fi
+
+    ip -6 rule list | grep -q "fwmark 0x1 lookup clearnet"
+    if [ $? -ne 0 ]; then
+        ip -6 rule add fwmark 1 table clearnet
+    fi
+
+    # Flush clearnet table to avoid duplicates
+    ip route flush table clearnet
+    ip -6 route flush table clearnet
+
+    # Copy all default routes from main table to clearnet table
+    ip route show table main | grep '^default' | while read -r route; do
+        ip route add table clearnet $route || true
+    done
+
+    ip -6 route show table main | grep '^default' | while read -r route; do
+        ip -6 route add table clearnet $route || true
+    done
+fi
