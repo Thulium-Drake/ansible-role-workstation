@@ -283,5 +283,5 @@
   when: workstation_desktop == 'sway'
 
 - name: 'Ensure Wireguard tunnel-bypass proxy is enabled'
-  ansible.builtin.include: 'wg_tunnel_bypass.yml'
+  ansible.builtin.include_tasks: 'wg_tunnel_bypass.yml'
   when: workstation_wg_tunnel_bypass
