@@ -6,12 +6,12 @@
 
 - name: 'Ensure Squid config rules'
   ansible.builtin.blockinfile:
-    marker: "# {{ ansible_managed }}"
+    marker: "# THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!"
     block: |
       dns_nameservers 8.8.8.8 8.8.4.4 2001:4860:4860::8888 2001:4860:4860::8844
       http_port 127.0.0.1:3128
     dest: '/etc/squid/squid.conf'
-    insert_after: 'EOF'
+    insertafter: 'EOF'
 
 - name: 'Ensure FirewallD rules for Squid are present'
   ansible.builtin.command: 'firewall-cmd --permanent --direct --add-rule {{ ipv_version }} mangle OUTPUT 0 -m owner --uid-owner squid -j MARK --set-mark 1'
@@ -21,7 +21,7 @@
   loop_control:
     loop_var: 'ipv_version'
 
-- name: 'Restart and enabled services'
+- name: 'Restart and enable services'
   ansible.builtin.service:
     name: "{{ service }}"
     state: 'restarted'

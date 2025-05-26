@@ -1,5 +1,5 @@
-# THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
 #!/bin/bash
+# THIS FILE IS MANAGED BY ANSIBLE, YOUR CHANGES WILL BE LOST!
 # Copies all default routes from main table to clearnet table on interface change and maintain ip rule
 
 IFACE=$1
